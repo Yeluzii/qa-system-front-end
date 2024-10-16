@@ -8,6 +8,7 @@ interface User {
   password: string;
   email: string;
   createdAt: string;
+  avatar: string;
 }
 
 export default createStore({
@@ -19,6 +20,12 @@ export default createStore({
     getUserId: (state): number | null => {
       if (state.user && state.user.id) {
         return state.user.id;
+      }
+      return null;
+    },
+    getAvatar: (state): string | null => {
+      if (state.user && state.user.avatar) {
+        return state.user.avatar;
       }
       return null;
     },

@@ -1,13 +1,48 @@
 <template>
-    <button @click="router.back()" class="back-button">返回</button>
-    <button @click="ask" class="ask-button">提问</button>
-    <button @click="router.push('/questions')" class="ask-button">问题广场</button>
-    <button @click="logout" class="logout-button">退出登录</button>
+    <nav class="navbar">
+        <div class="action-buttons">
+            <button @click="router.back()" class="back-button">返回</button>
+            <button @click="ask" class="ask-button">提问</button>
+            <button @click="router.push('/questions')" class="ask-button">问题广场</button>
+            <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
+            <button @click="logout" class="logout-button" v-else>登录</button>
+        </div>
+        <div class="avatar-container">
+            <div class="avatar medium" @click="printAvatar">
+                <img :src="avatar" alt="头像" />
+            </div>
+        </div>
+    </nav>
+
+    <!-- <div class="avatar small">
+        <img :src="avatar" alt="头像" />
+    </div> -->
+
+    <!-- <div class="avatar large">
+        <img :src="avatar" alt="头像" />
+    </div> -->
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from "vue"
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+// 使用 computed 获取 userId
+const userId = computed(() => store.getters.getUserId);
+const avatar = computed(() => store.getters.getAvatar);
+
+const printAvatar = () => {
+    console.log(avatar.value);
+}
+
+// 在组件挂载时获取当前用户信息
+onMounted(() => {
+    store.dispatch('fetchCurrentUser');
+});
 
 const logout = async () => {
     try {
@@ -50,5 +85,66 @@ const ask = () => {
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         /* 添加阴影，增加立体感 */
     }
+}
+
+nav {
+    display: flex;
+}
+
+.action-buttons {
+    flex: 1;
+}
+
+.avatar-container {
+    flex: 2;
+}
+
+.avatar {
+    width: 50px;
+    /* 默认大小 */
+    height: 50px;
+    /* 默认大小 */
+    border-radius: 50%;
+    /* 圆形 */
+    background-color: #ccc;
+    /* 默认背景色 */
+    display: inline-block;
+    overflow: hidden;
+    /* 确保内容不会溢出 */
+    border: 2px solid #fff;
+    /* 白色边框 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* 轻微的阴影效果 */
+    transition: transform 0.2s ease-in-out;
+    /* 平滑的过渡效果 */
+}
+
+/* .avatar.small {
+    width: 30px;
+    height: 30px;
+} */
+
+.avatar.medium {
+    width: 60px;
+    height: 60px;
+}
+
+/* .avatar.large {
+    width: 80px;
+    height: 80px;
+} */
+
+/* 鼠标悬停效果 */
+.avatar:hover {
+    transform: scale(1.1);
+    /* 放大效果 */
+}
+
+/* 图片内容 */
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 保持图片比例并填充容器 */
 }
 </style>

@@ -6,7 +6,7 @@ import QuestionList from "../views/QuestionList.vue";
 import QuestionDetail from "../views/QuestionDetail.vue";
 
 const routes: Array<RouteRecordRaw> = [
-  { path: "/", component: Login },
+  { path: "/", component: QuestionList },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/ask", component: AskQuestion },
