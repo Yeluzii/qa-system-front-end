@@ -1,18 +1,18 @@
 <template>
     <nav>
-        <router-link to="/login">Login</router-link> |
-        <router-link to="/register">Register</router-link>
+        <router-link to="/login">登录</router-link> |
+        <router-link to="/register">注册</router-link>
     </nav>
     <div>
-        <h1>Login</h1>
+        <h1>登录</h1>
         <el-form @submit.prevent="login">
-            <el-form-item label="Username">
-                <el-input v-model="username" value="admin"></el-input>
+            <el-form-item label="用户名">
+                <el-input v-model="username"></el-input>
             </el-form-item>
-            <el-form-item label="Password">
-                <el-input type="password" v-model="password" value="123456"></el-input>
+            <el-form-item label="密码">
+                <el-input type="password" v-model="password"></el-input>
             </el-form-item>
-            <el-button type="primary" native-type="submit">Login</el-button>
+            <el-button type="primary" native-type="submit">登录</el-button>
         </el-form>
     </div>
 </template>
@@ -22,20 +22,23 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
-const username = ref('');
-const password = ref('');
+const username = ref<string>("");
+const password = ref<string>('');
 
 const router = useRouter();
 
 const login = async () => {
     try {
         const response = await axios.post('http://localhost:8080/users/login', { username: username.value, password: password.value });
-        if (response.status === 200) {
+        if (response.data.code === 200) {
+            console.log('登录成功:', response.data);
             router.push('/questions');
+        } else {
+            alert('用户名或密码错误');
         }
-        console.log('Logged in:', response.data);
     } catch (error) {
-        console.error('Login failed:', error);
+        alert('发生异常，登录失败');
+        console.error('登录失败:', error);
     }
 };
 </script>

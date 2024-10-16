@@ -29,15 +29,19 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { Question, Answer } from '@/types';
 
+const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const question = ref<Question | null>(null);
 const answers = ref<Answer[]>([]);
 const newAnswer = ref({ content: '' });
+
+const userId = computed(() => store.getters.getUserId);
 
 
 const fetchQuestion = async (questionId: number) => {
@@ -61,10 +65,15 @@ const fetchAnswers = async (questionId: number) => {
 const addAnswer = async () => {
     if (newAnswer.value.content.trim()) {
         try {
+            if (!userId.value) {
+                alert("请先登录！")
+                router.push('/login')
+                return;
+            }
             const response = await axios.post('http://localhost:8080/answers/reply', {
                 content: newAnswer.value.content,
                 questionId: question.value?.id,
-                userId: 5 // Replace with actual user ID
+                userId: userId.value
             });
             // answers.value.push(response.data);
             // newAnswer.value.content = '';
@@ -76,6 +85,7 @@ const addAnswer = async () => {
 };
 
 onMounted(() => {
+    store.dispatch('fetchCurrentUser');
     const questionId = Number(route.params.id);
     fetchQuestion(questionId);
     fetchAnswers(questionId);
