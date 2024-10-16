@@ -1,25 +1,26 @@
 <template>
-    <div>
+    <div class="question-detail-container">
+        <NavList></NavList>
         <h1>问题详情</h1>
-        <div v-if="question">
-            <h2>标题：{{ question.title }}</h2>
-            <p>内容：{{ question.content }}</p>
-            <h3>回复</h3>
-            <ul>
-                <li v-for="answer in answers" :key="answer.id">
-                    <p>
-                        <span>回复人：{{ answer.user.username }}</span>
-                        <span>回复内容：{{ answer.content }}</span>
-                    </p>
-                    <span>时间：{{ answer.createdAt }}</span>
+        <div v-if="question" class="question-content">
+            <div style="border: 1px solid;border-radius: 5px;">
+                <h2>标题：{{ question.title }}</h2>
+                <p>内容：{{ question.content }}</p>
+            </div>
+            <el-form @submit.prevent="addAnswer" class="form-container">
+                <el-form-item label="给出你的回答：" class="form-item">
+                    <el-input type="textarea" v-model="newAnswer.content" rows="4" class="textarea-field"></el-input>
+                </el-form-item>
+                <el-button type="primary" native-type="submit" class="submit-button">提交回复</el-button>
+            </el-form>
+            <ul class="answers-list">
+                <h3>回复</h3>
+                <li v-for="answer in answers" :key="answer.id" class="answer-item">
+                    <span class="answer-user">回复人：{{ answer.user.username }}</span>
+                    <p class="answer-content">回复内容：{{ answer.content }}</p>
+                    <span class="answer-time">时间：{{ answer.createdAt }}</span>
                 </li>
             </ul>
-            <el-form @submit.prevent="addAnswer">
-                <el-form-item label="给出你的回答：">
-                    <el-input type="textarea" v-model="newAnswer.content" rows="4"></el-input>
-                </el-form-item>
-                <el-button type="primary" native-type="submit">提交回复</el-button>
-            </el-form>
         </div>
         <div v-else>
             <p>Loading...</p>
@@ -27,7 +28,10 @@
     </div>
 </template>
 
+
+
 <script setup lang="ts">
+import NavList from '@/components/NavList.vue';
 import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute, useRouter } from 'vue-router';
@@ -92,4 +96,88 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.question-detail-container {
+    border: 1px solid;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);
+    border-radius: 8px;
+}
+
+h1,
+h2,
+h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.answers-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+
+.answer-item {
+    border: 1px solid;
+    border-radius: 5px;
+    margin-bottom: 2px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    /* 使子元素垂直排列 */
+}
+
+.answer-user,
+.answer-time {
+    color: #606266;
+    font-size: 14px;
+    margin-bottom: 5px;
+    /* 添加底部边距，使得用户名称和回复时间之间有间隔 */
+}
+
+.answer-content {
+    color: #606266;
+    font-size: 14px;
+    margin-bottom: 10px;
+    /* 回复内容与其他内容间留出更多空间 */
+}
+
+
+
+
+.form-container {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-item {
+    margin-bottom: 15px;
+}
+
+.textarea-field {
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+}
+
+.textarea-field:focus {
+    border-color: #409eff;
+}
+
+.submit-button {
+    width: 100%;
+    background-color: #409eff;
+    border-color: #409eff;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all .2s ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: #66b1ff;
+    border-color: #66b1ff;
+}
+</style>

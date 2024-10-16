@@ -1,19 +1,23 @@
 <template>
-    <div>
+    <div class="ask-question-container">
+        <NavList></NavList>
         <h1>提问一个问题</h1>
-        <el-form @submit.prevent="askQuestion">
-            <el-form-item label="标题">
-                <el-input v-model="title"></el-input>
+        <el-form @submit.prevent="askQuestion" class="form-container">
+            <el-form-item label="标题" class="form-item">
+                <el-input v-model="title" class="input-field"></el-input>
             </el-form-item>
-            <el-form-item label="详细概述">
-                <el-input type="textarea" v-model="content" rows="4"></el-input>
+            <el-form-item label="详细概述" class="form-item">
+                <el-input type="textarea" v-model="content" rows="4" class="textarea-field"></el-input>
             </el-form-item>
-            <el-button type="primary" native-type="submit">提问</el-button>
+            <el-button type="primary" native-type="submit" class="submit-button">提问</el-button>
         </el-form>
     </div>
 </template>
 
+
+
 <script setup lang="ts">
+import NavList from '@/components/NavList.vue';
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -56,4 +60,52 @@ const askQuestion = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.ask-question-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    border-radius: 8px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    width: 100%;
+}
+
+.form-item {
+    margin-bottom: 15px;
+}
+
+.input-field,
+.textarea-field {
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+}
+
+.input-field:focus,
+.textarea-field:focus {
+    border-color: #409eff;
+}
+
+.submit-button {
+    width: 100%;
+    background-color: #409eff;
+    border-color: #409eff;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all .2s ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: #66b1ff;
+    border-color: #66b1ff;
+}
+</style>
