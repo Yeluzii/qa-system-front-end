@@ -1,12 +1,12 @@
 <template>
+    <NavList></NavList>
     <div class="question-square-container">
-        <NavList></NavList>
         <div>
             <h1>问题广场</h1>
-            <el-row :gutter="16" class="questions-grid">
-                <el-col :span="8" v-for="question in questions" :key="question.id" class="question-item">
+            <el-row :gutter="30" class="questions-grid">
+                <el-card :span="8" v-for="question in questions" :key="question.id" class="question-items">
                     <QuestionItem style="margin-top: 2px;" :question="question" />
-                </el-col>
+                </el-card>
             </el-row>
         </div>
     </div>
@@ -26,10 +26,10 @@ const questions = ref<Question[]>([]);
 const fetchQuestions = async () => {
     try {
         const response = await axios.get('http://localhost:8080/questions/all');
-        console.log('Fetched questions:', response.data.data);
+        console.log('获取到的问题:', response.data.data);
         questions.value = response.data.data;
     } catch (error) {
-        console.error('Failed to fetch questions:', error);
+        console.error('获取问题失败:', error);
     }
 };
 
@@ -60,21 +60,22 @@ h1 {
 
 .questions-grid {
     display: flex;
-    flex-wrap: wrap;
+
 }
 
-.question-item {
+.question-items {
+    display: flex;
     margin-bottom: 20px;
-    width: calc(33.333% - 16px);
+    width: calc(30%);
     min-width: 200px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);
     border-radius: 8px;
     overflow: hidden;
     transition: transform .2s;
-    border: 1px solid #409eff;
+    /* border: 1px solid rgb(112, 89, 238); */
 }
 
-.question-item:hover {
+.question-items:hover {
     transform: scale(1.02);
 }
 

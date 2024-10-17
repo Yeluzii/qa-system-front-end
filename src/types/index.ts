@@ -4,6 +4,7 @@ export interface User {
   password: string;
   email: string;
   createdAt: string;
+  avatar: string;
 }
 
 export interface Question {

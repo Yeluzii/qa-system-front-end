@@ -1,18 +1,17 @@
 <template>
-    <nav class="navbar">
-        <div class="action-buttons">
-            <button @click="router.back()" class="back-button">返回</button>
-            <button @click="ask" class="ask-button">提问</button>
-            <button @click="router.push('/questions')" class="ask-button">问题广场</button>
-            <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
-            <button @click="logout" class="logout-button" v-else>登录</button>
-        </div>
-        <div class="avatar-container">
+    <div class="action-buttons">
+        <button @click="router.back()" class="back-button">返回</button>
+        <button @click="ask" class="ask-button">提问</button>
+        <button @click="router.push('/questions')" class="ask-button">问题广场</button>
+        <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
+        <button @click="logout" class="login-button" v-else>登录</button>
+        <img class="avatar medium" @click="printAvatar" :src="avatar" alt="头像" />
+    </div>
+    <!-- <div class="avatar-container">
             <div class="avatar medium" @click="printAvatar">
                 <img :src="avatar" alt="头像" />
             </div>
-        </div>
-    </nav>
+        </div> -->
 
     <!-- <div class="avatar small">
         <img :src="avatar" alt="头像" />
@@ -24,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue"
+import { computed, onMounted } from "vue"
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
@@ -61,6 +60,7 @@ const ask = () => {
 
 <style scoped>
 .logout-button,
+.login-button,
 .ask-button,
 .back-button {
     background-color: #409eff;
@@ -68,7 +68,7 @@ const ask = () => {
     border: none;
     border-radius: 4px;
     padding: 10px 20px;
-    margin: 10px;
+    margin: 15px 5px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color .2s ease-in-out;
@@ -87,16 +87,21 @@ const ask = () => {
     }
 }
 
-nav {
-    display: flex;
-}
+/* .action-buttons {
+    flex: 1;
+} */
+
+/* .avatar-container {
+    flex: 2;
+} */
 
 .action-buttons {
-    flex: 1;
-}
-
-.avatar-container {
-    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* 项目间的间距 */
 }
 
 .avatar {
@@ -111,7 +116,7 @@ nav {
     display: inline-block;
     overflow: hidden;
     /* 确保内容不会溢出 */
-    border: 2px solid #fff;
+    border: 2px solid #ffc400;
     /* 白色边框 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     /* 轻微的阴影效果 */

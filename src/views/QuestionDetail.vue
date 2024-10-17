@@ -1,24 +1,35 @@
 <template>
+    <NavList></NavList>
     <div class="question-detail-container">
-        <NavList></NavList>
         <h1>问题详情</h1>
         <div v-if="question" class="question-content">
             <div style="border: 1px solid;border-radius: 5px;">
                 <h2>标题：{{ question.title }}</h2>
+                <h3>
+                    提问者：
+                    <img class="avatar medium" :src="question.user.avatar" alt="头像" />
+                    {{ question.user.username }}
+                </h3>
+                <p>创建时间：{{ question.createdAt }}</p>
                 <p>内容：{{ question.content }}</p>
             </div>
             <el-form @submit.prevent="addAnswer" class="form-container">
                 <el-form-item label="给出你的回答：" class="form-item">
-                    <el-input type="textarea" v-model="newAnswer.content" rows="4" class="textarea-field"></el-input>
+                    <el-input type="textarea" v-model="newAnswer.content" rows="4" class="textarea-field"
+                        required></el-input>
                 </el-form-item>
                 <el-button type="primary" native-type="submit" class="submit-button">提交回复</el-button>
             </el-form>
             <ul class="answers-list">
                 <h3>回复</h3>
                 <li v-for="answer in answers" :key="answer.id" class="answer-item">
-                    <span class="answer-user">回复人：{{ answer.user.username }}</span>
+                    <h4 class="answer-user">
+                        回复人：
+                        <img class="avatar medium" :src="answer.user.avatar" alt="头像" />
+                        {{ answer.user.username }}
+                    </h4>
+                    <span class="answer-time">回复时间：{{ answer.createdAt }}</span>
                     <p class="answer-content">回复内容：{{ answer.content }}</p>
-                    <span class="answer-time">时间：{{ answer.createdAt }}</span>
                 </li>
             </ul>
         </div>
@@ -53,7 +64,7 @@ const fetchQuestion = async (questionId: number) => {
         const response = await axios.get(`http://localhost:8080/questions/${questionId}`);
         question.value = response.data.data;
     } catch (error) {
-        console.error('Failed to fetch question:', error);
+        console.error('获取问题失败:', error);
     }
 };
 
@@ -62,7 +73,7 @@ const fetchAnswers = async (questionId: number) => {
         const response = await axios.get(`http://localhost:8080/answers/questionId/${questionId}`);
         answers.value = response.data.data;
     } catch (error) {
-        console.error('Failed to fetch answers:', error);
+        console.error('获取问题失败:', error);
     }
 };
 
@@ -79,9 +90,10 @@ const addAnswer = async () => {
                 questionId: question.value?.id,
                 userId: userId.value
             });
-            // answers.value.push(response.data);
-            // newAnswer.value.content = '';
-            router.go(0)
+            if (response.data.code === 201) {
+                alert("回答成功！")
+                router.go(0)
+            }
         } catch (error) {
             console.error('Failed to add answer:', error);
         }
@@ -97,6 +109,45 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.avatar {
+    width: 50px;
+    /* 默认大小 */
+    height: 50px;
+    /* 默认大小 */
+    border-radius: 50%;
+    /* 圆形 */
+    background-color: #ccc;
+    /* 默认背景色 */
+    display: inline-block;
+    overflow: hidden;
+    /* 确保内容不会溢出 */
+    border: 2px solid #ffc400;
+    /* 白色边框 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* 轻微的阴影效果 */
+    transition: transform 0.2s ease-in-out;
+    /* 平滑的过渡效果 */
+}
+
+.avatar.medium {
+    width: 60px;
+    height: 60px;
+}
+
+/* 鼠标悬停效果 */
+.avatar:hover {
+    transform: scale(1.1);
+    /* 放大效果 */
+}
+
+/* 图片内容 */
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* 保持图片比例并填充容器 */
+}
+
 .question-detail-container {
     border: 1px solid;
     max-width: 800px;

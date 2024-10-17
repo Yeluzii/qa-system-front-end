@@ -40,6 +40,8 @@ const register = async () => {
             console.log('注册成功:', response.data);
             alert('注册成功');
             router.push('/login');
+        } else {
+            alert('注册失败,检查用户名是否过长！');
         }
     } catch (error) {
         alert('注册失败');

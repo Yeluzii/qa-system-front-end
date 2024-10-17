@@ -1,13 +1,13 @@
 <template>
+    <NavList></NavList>
     <div class="ask-question-container">
-        <NavList></NavList>
         <h1>提问一个问题</h1>
         <el-form @submit.prevent="askQuestion" class="form-container">
             <el-form-item label="标题" class="form-item">
-                <el-input v-model="title" class="input-field"></el-input>
+                <el-input v-model="title" class="input-field" required></el-input>
             </el-form-item>
             <el-form-item label="详细概述" class="form-item">
-                <el-input type="textarea" v-model="content" rows="4" class="textarea-field"></el-input>
+                <el-input type="textarea" v-model="content" rows="4" class="textarea-field" required></el-input>
             </el-form-item>
             <el-button type="primary" native-type="submit" class="submit-button">提问</el-button>
         </el-form>
