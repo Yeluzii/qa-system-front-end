@@ -1,8 +1,8 @@
 <template>
     <NavList></NavList>
-    <div>
+    <div class="user-info-container">
         <h2>我的主页</h2>
-        <div v-if="user">
+        <div v-if="user" class="user-details">
             <h3>
                 <img class="avatar large" :src="user.avatar" alt="头像" />
                 用户名：{{ user.username }}
@@ -43,35 +43,61 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.user-info-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.user-details {
+    text-align: center;
+}
+
 .avatar {
     width: 50px;
-    /* 默认大小 */
     height: 50px;
-    /* 默认大小 */
     border-radius: 50%;
-    /* 圆形 */
     background-color: #ccc;
-    /* 默认背景色 */
     display: inline-block;
     overflow: hidden;
-    /* 确保内容不会溢出 */
     border: 2px solid #ffc400;
-    /* 白色边框 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* 轻微的阴影效果 */
     transition: transform 0.2s ease-in-out;
-    /* 平滑的过渡效果 */
+    vertical-align: middle;
+    margin-right: 15px;
 }
 
 .avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* 保持图片比例并填充容器 */
 }
 
 .avatar.large {
     width: 100px;
     height: 100px;
+}
+
+h3,
+h4 {
+    color: #333;
+    margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+    .avatar.large {
+        width: 80px;
+        height: 80px;
+    }
 }
 </style>

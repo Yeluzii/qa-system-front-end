@@ -7,7 +7,8 @@
                 <h2>标题：{{ question.title }}</h2>
                 <h3>
                     提问者：
-                    <img @click="toOthers" class="avatar medium" :src="question.user.avatar" alt="头像" />
+                    <img @click="toOthers" class="avatar medium" :src="question.user.avatar" alt="头像"
+                        title="查看他/她的信息" />
                     {{ question.user.username }}
                 </h3>
                 <p>创建时间：{{ question.createdAt }}</p>
@@ -22,16 +23,19 @@
             </el-form>
             <ul class="answers-list">
                 <h3>回复</h3>
-                <li v-for="answer in answers" :key="answer.id" class="answer-item">
+                <li v-for="answer in paginatedAnswers" :key="answer.id" class="answer-item">
                     <h4 class="answer-user">
                         回复人：
-                        <img class="avatar medium" :src="answer.user.avatar" alt="头像" />
+                        <img @click="router.push(`/others/${answer.user.id}`)" class="avatar medium"
+                            :src="answer.user.avatar" alt="头像" title="点击查看他/她的信息" />
                         {{ answer.user.username }}
                     </h4>
                     <span class="answer-time">回复时间：{{ answer.createdAt }}</span>
                     <p class="answer-content">回复内容：{{ answer.content }}</p>
                 </li>
             </ul>
+            <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
+                layout="total, prev, pager, next" :total="allAnswers.length" class="pagination"></el-pagination>
         </div>
         <div v-else>
             <p>Loading...</p>
@@ -53,11 +57,12 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const question = ref<Question | null>(null);
-const answers = ref<Answer[]>([]);
+const allAnswers = ref<Answer[]>([]);
 const newAnswer = ref({ content: '' });
+const currentPage = ref(1);
+const pageSize = ref(3);
 
 const userId = computed(() => store.getters.getUserId);
-
 
 const fetchQuestion = async (questionId: number) => {
     try {
@@ -71,18 +76,24 @@ const fetchQuestion = async (questionId: number) => {
 const fetchAnswers = async (questionId: number) => {
     try {
         const response = await axios.get(`http://localhost:8080/answers/questionId/${questionId}`);
-        answers.value = response.data.data;
+        allAnswers.value = response.data.data;
     } catch (error) {
         console.error('获取问题失败:', error);
     }
 };
 
+const paginatedAnswers = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return allAnswers.value.slice(start, end);
+});
+
 const addAnswer = async () => {
     if (newAnswer.value.content.trim()) {
         try {
             if (!userId.value) {
-                alert("请先登录！")
-                router.push('/login')
+                alert("请先登录！");
+                router.push('/login');
                 return;
             }
             const response = await axios.post('http://localhost:8080/answers/reply', {
@@ -91,8 +102,9 @@ const addAnswer = async () => {
                 userId: userId.value
             });
             if (response.data.code === 201) {
-                alert("回答成功！")
-                router.go(0)
+                alert("回答成功！");
+                fetchAnswers(Number(route.params.id));
+                newAnswer.value.content = ''; // 清空输入框
             }
         } catch (error) {
             console.error('Failed to add answer:', error);
@@ -100,9 +112,13 @@ const addAnswer = async () => {
     }
 };
 
-// const toOthers = () => {
-//     router.push({ name: 'OthersProfiles', params: { userId: question.value?.user.id } });
-// };
+const toOthers = () => {
+    router.push({ name: 'OthersProfiles', params: { uId: question.value?.user.id } });
+};
+
+const handlePageChange = (newPage: number) => {
+    currentPage.value = newPage;
+};
 
 onMounted(() => {
     store.dispatch('fetchCurrentUser');
@@ -113,6 +129,17 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.question-content h2 {
+    word-wrap: break-word;
+    /* 允许长单词或 URL 地址换行到下一行 */
+    white-space: normal;
+    /* 默认值，允许文本换行 */
+    overflow-wrap: break-word;
+    /* 和 word-wrap 相同，用于新标准 */
+    color: #333;
+    margin-bottom: 20px;
+}
+
 .avatar {
     width: 50px;
     /* 默认大小 */
@@ -155,7 +182,7 @@ onMounted(() => {
 .question-detail-container {
     border: 1px solid;
     max-width: 800px;
-    margin: 50px auto;
+    margin: 30px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);

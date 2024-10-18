@@ -5,7 +5,7 @@
         <button @click="router.push('/questions')" class="ask-button">问题广场</button>
         <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
         <button @click="logout" class="login-button" v-else>登录</button>
-        <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" />
+        <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" title="主页" />
     </div>
     <!-- <div class="avatar-container">
             <div class="avatar medium" @click="printAvatar">

@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/questions/:id", component: QuestionDetail, name: "QuestionDetail" },
   { path: "/mine", component: MyProfiles, name: "MyProfiles" },
   {
-    path: "/others/:userId",
+    path: "/others/:uId",
     component: OthersProfiles,
     name: "OthersProfiles",
   },
