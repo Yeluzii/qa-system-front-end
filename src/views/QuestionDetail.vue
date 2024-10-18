@@ -7,7 +7,7 @@
                 <h2>标题：{{ question.title }}</h2>
                 <h3>
                     提问者：
-                    <img class="avatar medium" :src="question.user.avatar" alt="头像" />
+                    <img @click="toOthers" class="avatar medium" :src="question.user.avatar" alt="头像" />
                     {{ question.user.username }}
                 </h3>
                 <p>创建时间：{{ question.createdAt }}</p>
@@ -99,6 +99,10 @@ const addAnswer = async () => {
         }
     }
 };
+
+// const toOthers = () => {
+//     router.push({ name: 'OthersProfiles', params: { userId: question.value?.user.id } });
+// };
 
 onMounted(() => {
     store.dispatch('fetchCurrentUser');

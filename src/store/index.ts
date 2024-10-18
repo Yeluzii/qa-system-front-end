@@ -5,7 +5,6 @@ import axios from "axios";
 interface User {
   id: number;
   username: string;
-  password: string;
   email: string;
   createdAt: string;
   avatar: string;
@@ -51,7 +50,7 @@ export default createStore({
   mutations: {
     // 更新 setUser 以确保传入的 user 具有正确的类型
     setUser(state, user: User | null) {
-      console.log("Setting user:", user); // 调试信息
+      console.log("设置用户为:", user); // 调试信息
       state.user = user;
     },
   },
@@ -65,11 +64,11 @@ export default createStore({
           commit("setUser", user);
         } else {
           commit("setUser", null);
-          console.error("Failed to fetch current user:", response.data.msg);
+          console.error("未成功获取当前用户:", response.data.msg);
         }
       } catch (error) {
         commit("setUser", null);
-        console.error("Failed to fetch current user:", error);
+        console.error("未成功获取当前用户:", error);
       }
     },
   },

@@ -5,7 +5,7 @@
         <button @click="router.push('/questions')" class="ask-button">问题广场</button>
         <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
         <button @click="logout" class="login-button" v-else>登录</button>
-        <img class="avatar medium" @click="printAvatar" :src="avatar" alt="头像" />
+        <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" />
     </div>
     <!-- <div class="avatar-container">
             <div class="avatar medium" @click="printAvatar">
@@ -34,10 +34,6 @@ const store = useStore();
 const userId = computed(() => store.getters.getUserId);
 const avatar = computed(() => store.getters.getAvatar);
 
-const printAvatar = () => {
-    console.log(avatar.value);
-}
-
 // 在组件挂载时获取当前用户信息
 onMounted(() => {
     store.dispatch('fetchCurrentUser');
@@ -56,6 +52,17 @@ const router = useRouter();
 const ask = () => {
     router.push("/ask");
 }
+
+const toMyProfiles = () => {
+    console.log(userId.value);
+    if (userId.value) {
+        router.push('/mine');
+    } else {
+        alert('请先登录')
+        router.push('/login');
+    }
+}
+
 </script>
 
 <style scoped>

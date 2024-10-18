@@ -3,7 +3,7 @@
         <h3>标题：{{ question.title }}</h3>
         <h4>
             提问者：
-            <img class="avatar medium" :src="question.user.avatar" alt="头像" />
+            <img @click="toOthers" class="avatar medium" :src="question.user.avatar" alt="头像" />
             {{ question.user.username }}
         </h4>
         <h5>提问时间：{{ question.createdAt }}</h5>
@@ -24,6 +24,11 @@ const props = defineProps({
 });
 
 const router = useRouter();
+
+// const toOthers = () => {
+//     router.push({ name: 'OthersProfiles', params: { userId: props.question.user.id } });
+//     console.log("传过去的uId：" + props.question.user.id)
+// };
 
 const viewQuestion = () => {
     router.push({ name: 'QuestionDetail', params: { id: props.question.id } });

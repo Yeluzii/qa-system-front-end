@@ -4,6 +4,8 @@ import Register from "../views/RegisterPage.vue";
 import AskQuestion from "../views/AskQuestion.vue";
 import QuestionList from "../views/QuestionList.vue";
 import QuestionDetail from "../views/QuestionDetail.vue";
+import MyProfiles from "@/views/MyProfiles.vue";
+import OthersProfiles from "@/views/OthersProfiles.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", component: QuestionList },
@@ -12,6 +14,12 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/ask", component: AskQuestion },
   { path: "/questions", component: QuestionList },
   { path: "/questions/:id", component: QuestionDetail, name: "QuestionDetail" },
+  { path: "/mine", component: MyProfiles, name: "MyProfiles" },
+  {
+    path: "/others/:userId",
+    component: OthersProfiles,
+    name: "OthersProfiles",
+  },
 ];
 
 const router = createRouter({
