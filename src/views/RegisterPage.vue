@@ -15,6 +15,9 @@
             <el-form-item label="密码" class="form-item">
                 <el-input type="password" v-model="password" class="input-field"></el-input>
             </el-form-item>
+            <el-form-item label="确认密码" prop="confirmPassword" class="form-item">
+                <el-input type="password" v-model="confirmPassword" class="input-field"></el-input>
+            </el-form-item>
             <el-button type="primary" native-type="submit" class="submit-button">注册</el-button>
         </el-form>
     </div>
@@ -30,18 +33,27 @@ import { useRouter } from 'vue-router';
 const username = ref('');
 const password = ref('');
 const email = ref('');
+const confirmPassword = ref('');
 
 const router = useRouter();
 
 const register = async () => {
+    if (password.value !== confirmPassword.value) {
+        alert('两次输入的密码不一致！');
+        return;
+    }
     try {
         const response = await axios.post('http://localhost:8080/users/register', { username: username.value, password: password.value, email: email.value });
         if (response.data.code === 201) {
             console.log('注册成功:', response.data);
             alert('注册成功');
             router.push('/login');
-        } else {
-            alert('注册失败,检查用户名是否过长！');
+        } else if (response.data.code === 409) {
+            alert('用户名已存在');
+            return;
+        } else if (response.data.code === 400) {
+            alert('注册失败！');
+            return;
         }
     } catch (error) {
         alert('注册失败');

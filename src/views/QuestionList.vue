@@ -4,14 +4,18 @@
         <div>
             <h1>问题广场</h1>
             <el-row :gutter="30" class="questions-grid">
-                <el-col :span="8" v-for="question in paginatedQuestions" :key="question.id" class="question-col">
+                <el-col :span="8" v-for="question in questions" :key="question.id" class="question-col">
                     <el-card class="question-items">
                         <QuestionItem style="margin-top: 2px;" :question="question" />
                     </el-card>
                 </el-col>
             </el-row>
-            <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
-                layout="total, prev, pager, next" :total="questions.length" class="pagination"></el-pagination>
+            <div style="text-align: center">
+                <button class="pagination" @click="prevPage" :disabled="isFirstPage"
+                    :class="{ disabled: isFirstPage }">上一页</button>
+                <button class="pagination" @click="nextPage" :disabled="isLastPage"
+                    :class="{ disabled: isLastPage }">下一页</button>
+            </div>
         </div>
     </div>
 </template>
@@ -26,8 +30,6 @@ import QuestionItem from '@/components/QuestionItem.vue';
 import { Question } from '@/types';
 
 const questions = ref<Question[]>([]);
-const currentPage = ref(1);
-const pageSize = ref(6);
 
 const fetchQuestions = async () => {
     try {
@@ -38,23 +40,76 @@ const fetchQuestions = async () => {
         console.error('获取问题失败:', error);
     }
 };
+fetchQuestions();
 
-const paginatedQuestions = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = start + pageSize.value;
-    return questions.value.slice(start, end);
-});
+const limit = ref<number>(6)
+const offset = ref<number>(0)
+const total = ref<number>(0)
+const fetchByPage = (): void => {
+    axios.get(`http://localhost:8080/questions/page?limit=${limit.value}&offset=${offset.value}`)
+        .then((res) => {
+            questions.value = res.data.data.questions;
+            total.value = res.data.data.total;
+        })
+        .catch((error) => {
+            console.error('获取问题失败:', error);
+        })
+}
 
-const handlePageChange = (newPage: number) => {
-    currentPage.value = newPage;
-};
+const nextPage = (): void => {
+    if (offset.value + limit.value >= questions.value.length) {
+        offset.value += limit.value;
+        fetchByPage();
+    }
+}
+
+const prevPage = (): void => {
+    if (offset.value > 0) {
+        offset.value -= limit.value;
+    }
+    fetchByPage();
+}
+
+const isFirstPage = computed(() => offset.value === 0);
+
+const isLastPage = computed(() => offset.value + limit.value >= total.value);
 
 onMounted(() => {
-    fetchQuestions();
-});
+    fetchByPage();
+})
 </script>
 
 <style scoped>
+.pagination {
+    background-color: #409eff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 15px 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    &:hover {
+        scale: 1.1;
+    }
+
+    &:active {
+        background-color: #3a8ee6;
+        /* 按下时更深的背景色 */
+        transform: translateY(2px);
+        /* 向下移动一点，模拟按下效果 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        /* 添加阴影，增加立体感 */
+    }
+}
+
 .question-square-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -88,11 +143,6 @@ h1 {
 
 .question-items:hover {
     transform: scale(1.02);
-}
-
-.pagination {
-    text-align: center;
-    margin-top: 20px;
 }
 
 @media (max-width: 768px) {

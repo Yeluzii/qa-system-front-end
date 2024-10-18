@@ -23,7 +23,7 @@
             </el-form>
             <ul class="answers-list">
                 <h3>回复</h3>
-                <li v-for="answer in paginatedAnswers" :key="answer.id" class="answer-item">
+                <li v-for="answer in allAnswers" :key="answer.id" class="answer-item">
                     <h4 class="answer-user">
                         回复人：
                         <img @click="router.push(`/others/${answer.user.id}`)" class="avatar medium"
@@ -34,8 +34,12 @@
                     <p class="answer-content">回复内容：{{ answer.content }}</p>
                 </li>
             </ul>
-            <el-pagination @current-change="handlePageChange" :current-page="currentPage" :page-size="pageSize"
-                layout="total, prev, pager, next" :total="allAnswers.length" class="pagination"></el-pagination>
+            <div style="text-align: center">
+                <button class="pagination" @click="prevPage" :disabled="isFirstPage"
+                    :class="{ disabled: isFirstPage }">上一页</button>
+                <button class="pagination" @click="nextPage" :disabled="isLastPage"
+                    :class="{ disabled: isLastPage }">下一页</button>
+            </div>
         </div>
         <div v-else>
             <p>Loading...</p>
@@ -59,8 +63,6 @@ const router = useRouter();
 const question = ref<Question | null>(null);
 const allAnswers = ref<Answer[]>([]);
 const newAnswer = ref({ content: '' });
-const currentPage = ref(1);
-const pageSize = ref(3);
 
 const userId = computed(() => store.getters.getUserId);
 
@@ -81,12 +83,6 @@ const fetchAnswers = async (questionId: number) => {
         console.error('获取问题失败:', error);
     }
 };
-
-const paginatedAnswers = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = start + pageSize.value;
-    return allAnswers.value.slice(start, end);
-});
 
 const addAnswer = async () => {
     if (newAnswer.value.content.trim()) {
@@ -116,19 +112,80 @@ const toOthers = () => {
     router.push({ name: 'OthersProfiles', params: { uId: question.value?.user.id } });
 };
 
-const handlePageChange = (newPage: number) => {
-    currentPage.value = newPage;
-};
+const limit = ref<number>(3)
+const offset = ref<number>(0)
+const total = ref<number>(0)
 
+const fetchByPage = async (questionId: number) => {
+    axios.get(`http://localhost:8080/answers/questionId/${questionId}/page?limit=${limit.value}&offset=${offset.value}`)
+        .then((res) => {
+            allAnswers.value = res.data.data.answers;
+            total.value = res.data.data.total;
+        })
+        .catch((error) => {
+            console.error('获取问题失败:', error);
+        })
+}
+const nextPage = (): void => {
+    if (offset.value + limit.value >= allAnswers.value.length) {
+        offset.value += limit.value;
+        fetchByPage(questionId);
+    }
+}
+
+const prevPage = (): void => {
+    if (offset.value > 0) {
+        offset.value -= limit.value;
+    }
+    fetchByPage(questionId);
+}
+
+const isFirstPage = computed(() => offset.value === 0);
+
+const isLastPage = computed(() => offset.value + limit.value >= total.value);
+
+
+const questionId = Number(route.params.id);
 onMounted(() => {
     store.dispatch('fetchCurrentUser');
     const questionId = Number(route.params.id);
-    fetchQuestion(questionId);
     fetchAnswers(questionId);
+    fetchQuestion(questionId);
+    fetchByPage(questionId);
 });
 </script>
 
 <style scoped>
+.pagination {
+    background-color: #409eff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 15px 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    &:hover {
+        scale: 1.1;
+    }
+
+    &:active {
+        background-color: #3a8ee6;
+        /* 按下时更深的背景色 */
+        transform: translateY(2px);
+        /* 向下移动一点，模拟按下效果 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        /* 添加阴影，增加立体感 */
+    }
+}
+
 .question-content h2 {
     word-wrap: break-word;
     /* 允许长单词或 URL 地址换行到下一行 */
