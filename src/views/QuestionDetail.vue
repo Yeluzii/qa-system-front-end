@@ -7,11 +7,11 @@
                 <h2>标题：{{ question.title }}</h2>
                 <h3>
                     提问者：
-                    <img @click="toOthers" class="avatar medium" :src="question.user.avatar" alt="头像"
-                        title="查看他/她的信息" />
+                    <img @click="toUps" class="avatar medium" :src="question.user.avatar" alt="头像" title="查看他/她的信息" />
                     {{ question.user.username }}
                 </h3>
                 <p>创建时间：{{ question.createdAt }}</p>
+                <h3>正文内容：</h3>
                 <p v-html="question.content"></p>
             </div>
             <el-form @submit.prevent="addAnswer" class="form-container">
@@ -22,12 +22,12 @@
                 <el-button type="primary" native-type="submit" class="submit-button">提交回复</el-button>
             </el-form>
             <ul class="answers-list">
-                <h3>回复</h3>
+                <h3>大家的回复：</h3>
                 <li v-for="answer in allAnswers" :key="answer.id" class="answer-item">
                     <h4 class="answer-user">
                         回复人：
-                        <img @click="router.push(`/others/${answer.user.id}`)" class="avatar medium"
-                            :src="answer.user.avatar" alt="头像" title="点击查看他/她的信息" />
+                        <img @click="toRespondent(answer.user.id)" class="avatar medium" :src="answer.user.avatar"
+                            alt="头像" title="点击查看他/她的信息" />
                         {{ answer.user.username }}
                     </h4>
                     <span class="answer-time">回复时间：{{ answer.createdAt }}</span>
@@ -108,8 +108,22 @@ const addAnswer = async () => {
     }
 };
 
-const toOthers = () => {
+const toUps = () => {
+    if (!userId.value) {
+        alert('请先登录！！！')
+        router.push('/login');
+        return;
+    }
     router.push({ name: 'OthersProfiles', params: { uId: question.value?.user.id } });
+};
+
+const toRespondent = (uId: number) => {
+    if (!userId.value) {
+        alert('请先登录！！！')
+        router.push('/login');
+        return;
+    }
+    router.push({ name: 'OthersProfiles', params: { uId: uId } });
 };
 
 const limit = ref<number>(3);

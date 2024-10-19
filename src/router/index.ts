@@ -1,3 +1,5 @@
+import { useStore } from "vuex";
+
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Login from "../views/LoginPage.vue";
 import Register from "../views/RegisterPage.vue";
@@ -12,7 +14,6 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/ask", component: AskQuestion },
-  { path: "/questions", component: QuestionList },
   { path: "/questions/:id", component: QuestionDetail, name: "QuestionDetail" },
   { path: "/mine", component: MyProfiles, name: "MyProfiles" },
   {
@@ -25,6 +26,34 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  // scrollBehavior(to, from, savedPosition) {
+  //   if (savedPosition) {
+  //     return savedPosition;
+  //   } else {
+  //     return { top: 0 };
+  //   }
+  // },
+});
+
+router.beforeEach((to, from, next) => {
+  const store = useStore();
+
+  if (
+    to.path === "/ask" ||
+    to.path === "/mine" ||
+    to.path.startsWith("/others") ||
+    to.path.startsWith("/questions")
+  ) {
+    const userId = store.getters.getUserId;
+    if (!userId) {
+      alert("请先登录！");
+      next("/login");
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

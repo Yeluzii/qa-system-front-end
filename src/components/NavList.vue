@@ -2,9 +2,9 @@
     <div class="action-buttons">
         <button @click="router.back()" class="back-button">返回</button>
         <button @click="ask" class="ask-button">提问</button>
-        <button @click="router.push('/questions')" class="ask-button">问题广场</button>
+        <button @click="router.push('/')" class="ask-button">问题广场</button>
         <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
-        <button @click="logout" class="login-button" v-else>登录</button>
+        <button @click="login" class="login-button" v-else>登录</button>
         <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" title="主页" />
     </div>
     <!-- <div class="avatar-container">
@@ -42,23 +42,31 @@ onMounted(() => {
 const logout = async () => {
     try {
         await axios.post('http://localhost:8080/users/logout');
-        window.location.href = '/login';
+        router.push("/login")
     } catch (error) {
         console.error('Failed to logout:', error);
     }
 }
 
+const login = () => {
+    router.push("/login");
+}
+
 const router = useRouter();
 const ask = () => {
-    router.push("/ask");
+    if (userId.value) {
+        router.push("/ask");
+    } else {
+        alert('请先登录!!!')
+        router.push('/login');
+    }
 }
 
 const toMyProfiles = () => {
-    console.log(userId.value);
     if (userId.value) {
         router.push('/mine');
     } else {
-        alert('请先登录')
+        alert('请先登录!!!')
         router.push('/login');
     }
 }

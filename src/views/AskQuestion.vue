@@ -6,7 +6,7 @@
             <el-form-item label="标题" class="form-item">
                 <el-input v-model="title" class="input-field" required></el-input>
             </el-form-item>
-            <el-form-item label="详细概述" class="form-item">
+            <el-form-item label="正文" class="form-item">
                 <div ref="editorElem" style="text-align:left;"></div>
             </el-form-item>
             <el-button type="primary" native-type="submit" class="submit-button">提问</el-button>

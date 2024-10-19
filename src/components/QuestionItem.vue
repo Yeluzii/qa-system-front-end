@@ -12,9 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, defineProps } from 'vue';
+import { computed, PropType, defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 import { Question } from '@/types';
+import { useStore } from 'vuex';
+
+const store = useStore();
+const userId = computed(() => store.getters.getUserId);
 
 const props = defineProps({
     question: {
@@ -26,11 +30,20 @@ const props = defineProps({
 const router = useRouter();
 
 const toOthers = () => {
-    console.log("传过去的uId：" + props.question.user.id)
+    if (!userId.value) {
+        alert('请先登录!!!')
+        router.push('/login');
+        return;
+    }
     router.push({ name: 'OthersProfiles', params: { uId: props.question.user.id } });
 };
 
 const viewQuestion = () => {
+    if (!userId.value) {
+        alert('请先登录!!!')
+        router.push('/login');
+        return;
+    }
     router.push({ name: 'QuestionDetail', params: { id: props.question.id } });
 };
 </script>

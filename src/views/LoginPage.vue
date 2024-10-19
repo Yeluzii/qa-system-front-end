@@ -34,7 +34,7 @@ const login = async () => {
         const response = await axios.post('http://localhost:8080/users/login', { username: username.value, password: password.value });
         if (response.data.code === 200) {
             console.log('登录成功:', response.data);
-            router.push('/questions');
+            router.push('/');
         } else {
             alert('用户名或密码错误');
         }
