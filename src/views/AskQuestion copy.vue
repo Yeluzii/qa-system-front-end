@@ -7,7 +7,7 @@
                 <el-input v-model="title" class="input-field" required></el-input>
             </el-form-item>
             <el-form-item label="详细概述" class="form-item">
-                <div ref="editorElem" style="text-align:left;"></div>
+                <el-input type="textarea" v-model="content" rows="4" class="textarea-field" required></el-input>
             </el-form-item>
             <el-button type="primary" native-type="submit" class="submit-button">提问</el-button>
         </el-form>
@@ -18,18 +18,16 @@
 
 <script setup lang="ts">
 import NavList from '@/components/NavList.vue';
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import E from 'wangeditor';
 
 const store = useStore();
 const router = useRouter();
-const editorElem = ref(null);
-const editorContent = ref('');
 
 const title = ref('');
+const content = ref('');
 
 // 使用 computed 获取 userId
 const userId = computed(() => store.getters.getUserId);
@@ -37,13 +35,6 @@ const userId = computed(() => store.getters.getUserId);
 // 在组件挂载时获取当前用户信息
 onMounted(() => {
     store.dispatch('fetchCurrentUser');
-    nextTick(() => {
-        const editor = new E(editorElem.value);
-        editor.config.onchange = (newHtml: string) => {
-            editorContent.value = newHtml;
-        };
-        editor.create();
-    });
 });
 
 const askQuestion = async () => {
@@ -55,7 +46,7 @@ const askQuestion = async () => {
             return;
         }
 
-        const response = await axios.post('http://localhost:8080/questions/ask', { title: title.value, content: editorContent.value, userId: userId.value });
+        const response = await axios.post('http://localhost:8080/questions/ask', { title: title.value, content: content.value, userId: userId.value });
         console.log('问题：', response.data);
         if (response.data.code === 201) {
             alert("提问成功！");
@@ -71,11 +62,11 @@ const askQuestion = async () => {
 
 <style scoped>
 .ask-question-container {
-    max-width: 80vw;
+    max-width: 800px;
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
     border-radius: 8px;
 }
 

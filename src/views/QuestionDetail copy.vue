@@ -3,7 +3,7 @@
     <div class="question-detail-container">
         <h1>问题详情</h1>
         <div v-if="question" class="question-content">
-            <div style="border: 1px solid; border-radius: 5px;">
+            <div style="border: 1px solid;border-radius: 5px;">
                 <h2>标题：{{ question.title }}</h2>
                 <h3>
                     提问者：
@@ -12,7 +12,7 @@
                     {{ question.user.username }}
                 </h3>
                 <p>创建时间：{{ question.createdAt }}</p>
-                <p v-html="question.content"></p>
+                <p>内容：{{ question.content }}</p>
             </div>
             <el-form @submit.prevent="addAnswer" class="form-container">
                 <el-form-item label="给出你的回答：" class="form-item">
@@ -31,7 +31,7 @@
                         {{ answer.user.username }}
                     </h4>
                     <span class="answer-time">回复时间：{{ answer.createdAt }}</span>
-                    <p v-html="answer.content" class="answer-content"></p>
+                    <p class="answer-content">回复内容：{{ answer.content }}</p>
                 </li>
             </ul>
             <div style="text-align: center">
@@ -112,9 +112,9 @@ const toOthers = () => {
     router.push({ name: 'OthersProfiles', params: { uId: question.value?.user.id } });
 };
 
-const limit = ref<number>(3);
-const offset = ref<number>(0);
-const total = ref<number>(0);
+const limit = ref<number>(3)
+const offset = ref<number>(0)
+const total = ref<number>(0)
 
 const fetchByPage = async (questionId: number) => {
     axios.get(`http://localhost:8080/answers/questionId/${questionId}/page?limit=${limit.value}&offset=${offset.value}`)
@@ -124,30 +124,31 @@ const fetchByPage = async (questionId: number) => {
         })
         .catch((error) => {
             console.error('获取问题失败:', error);
-        });
-};
-
+        })
+}
 const nextPage = (): void => {
-    if (offset.value + limit.value < total.value) {
+    if (offset.value + limit.value >= allAnswers.value.length) {
         offset.value += limit.value;
         fetchByPage(questionId);
     }
-};
+}
 
 const prevPage = (): void => {
     if (offset.value > 0) {
         offset.value -= limit.value;
     }
     fetchByPage(questionId);
-};
+}
 
 const isFirstPage = computed(() => offset.value === 0);
 
 const isLastPage = computed(() => offset.value + limit.value >= total.value);
 
+
 const questionId = Number(route.params.id);
 onMounted(() => {
     store.dispatch('fetchCurrentUser');
+    const questionId = Number(route.params.id);
     fetchAnswers(questionId);
     fetchQuestion(questionId);
     fetchByPage(questionId);
@@ -237,7 +238,7 @@ onMounted(() => {
 
 .question-detail-container {
     border: 1px solid;
-    max-width: 80vw;
+    max-width: 800px;
     margin: 30px auto;
     padding: 20px;
     background-color: #fff;
