@@ -31,16 +31,15 @@ import { Question } from '@/types';
 
 const questions = ref<Question[]>([]);
 
-const fetchQuestions = async () => {
-    try {
-        const response = await axios.get('http://localhost:8080/questions/all');
-        questions.value = response.data.data;
-        console.log('获取到的问题:', response.data.data);
-    } catch (error) {
-        console.error('获取问题失败:', error);
-    }
-};
-fetchQuestions();
+// const fetchQuestions = async () => {
+//     try {
+//         const response = await axios.get('http://localhost:8080/questions/all');
+//         questions.value = response.data.data;
+//         console.log('获取到的问题:', response.data.data);
+//     } catch (error) {
+//         console.error('获取问题失败:', error);
+//     }
+// };
 
 const limit = ref<number>(6)
 const offset = ref<number>(0)
@@ -75,6 +74,7 @@ const isFirstPage = computed(() => offset.value === 0);
 const isLastPage = computed(() => offset.value + limit.value >= total.value);
 
 onMounted(() => {
+    // fetchQuestions();
     fetchByPage();
 })
 </script>
