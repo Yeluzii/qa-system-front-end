@@ -2,7 +2,13 @@
     <NavList></NavList>
     <div class="question-square-container">
         <div>
-            <h1>问题广场</h1>
+            <div class="header">
+                <h1>问题广场</h1>
+                <div class="search-form">
+                    <el-input v-model="searchKeyword" placeholder="请输入标题或内容关键字"></el-input>
+                    <el-button type="primary" @click="searchQuestions">搜索</el-button>
+                </div>
+            </div>
             <el-row :gutter="30" class="questions-grid">
                 <el-col :span="8" v-for="question in questions" :key="question.id" class="question-col">
                     <el-card class="question-items">
@@ -30,6 +36,7 @@ import QuestionItem from '@/components/QuestionItem.vue';
 import { Question } from '@/types';
 
 const questions = ref<Question[]>([]);
+const searchKeyword = ref('');
 
 // const fetchQuestions = async () => {
 //     try {
@@ -44,8 +51,12 @@ const questions = ref<Question[]>([]);
 const limit = ref<number>(6)
 const offset = ref<number>(0)
 const total = ref<number>(0)
-const fetchByPage = (): void => {
-    axios.get(`http://localhost:8080/questions/page?limit=${limit.value}&offset=${offset.value}`)
+const fetchByPage = (keyword?: string): void => {
+    let url = `http://localhost:8080/questions/page?limit=${limit.value}&offset=${offset.value}`;
+    if (keyword) {
+        url += `&keyword=${encodeURIComponent(keyword)}`;
+    }
+    axios.get(url)
         .then((res) => {
             questions.value = res.data.data.questions;
             total.value = res.data.data.total;
@@ -56,9 +67,9 @@ const fetchByPage = (): void => {
 }
 
 const nextPage = (): void => {
-    if (offset.value + limit.value >= questions.value.length) {
+    if (offset.value + limit.value < total.value) {
         offset.value += limit.value;
-        fetchByPage();
+        fetchByPage(searchKeyword.value);
     }
 }
 
@@ -66,12 +77,17 @@ const prevPage = (): void => {
     if (offset.value > 0) {
         offset.value -= limit.value;
     }
-    fetchByPage();
+    fetchByPage(searchKeyword.value);
 }
 
 const isFirstPage = computed(() => offset.value === 0);
 
 const isLastPage = computed(() => offset.value + limit.value >= total.value);
+
+const searchQuestions = (): void => {
+    offset.value = 0;
+    fetchByPage(searchKeyword.value);
+}
 
 onMounted(() => {
     // fetchQuestions();
@@ -80,6 +96,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    color: #333;
+    margin: 0;
+    flex: 1;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    max-width: 50%;
+    /* 可以根据需要调整最大宽度 */
+}
+
+.search-form .el-input {
+    width: 100%;
+    margin-right: 10px;
+}
+
 .pagination {
     background-color: #409eff;
     color: #fff;
@@ -114,12 +155,6 @@ onMounted(() => {
     max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
-}
-
-h1 {
-    color: #333;
-    text-align: center;
-    margin: 10px;
 }
 
 .questions-grid {
