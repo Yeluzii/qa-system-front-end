@@ -50,7 +50,7 @@ const askQuestion = async () => {
         console.log('问题：', response.data);
         if (response.data.code === 201) {
             alert("提问成功！");
-            router.push('/questions');
+            router.push('/');
         } else {
             alert("提问失败！");
         }

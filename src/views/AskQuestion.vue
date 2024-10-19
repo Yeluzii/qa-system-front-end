@@ -14,8 +14,6 @@
     </div>
 </template>
 
-
-
 <script setup lang="ts">
 import NavList from '@/components/NavList.vue';
 import { ref, computed, onMounted, nextTick } from 'vue';
@@ -39,9 +37,63 @@ onMounted(() => {
     store.dispatch('fetchCurrentUser');
     nextTick(() => {
         const editor = new E(editorElem.value);
+
         editor.config.onchange = (newHtml: string) => {
             editorContent.value = newHtml;
         };
+
+        // 自定义上传图片
+        editor.config.customUploadImg = function (resultFiles, insertImgFn) {
+            resultFiles.forEach(async (file) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    const response = await axios.post('http://localhost:8080/upload/image', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    });
+                    if (response.status === 200) {
+                        const data = response.data;
+                        if (data.url && data.alt && data.href) {
+                            const fullUrl = 'http://localhost:8080' + data.url; // 拼接完整的 URL
+                            insertImgFn(fullUrl, data.alt, data.href); // 将图片插入到编辑器中
+                        } else {
+                            console.error('上传图片失败: 后端响应中缺少必要的字段', data);
+                        }
+                    } else {
+                        console.error('上传图片失败: 后端响应状态码不是 200', response);
+                    }
+                } catch (error) {
+                    console.error('上传图片失败:', error);
+                }
+            });
+        };
+
+        // 自定义上传视频
+        editor.config.customUploadVideo = function (resultFiles, insertVideoFn) {
+            resultFiles.forEach(async (file) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    const response = await axios.post('http://localhost:8080/upload/video', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' }
+                    });
+                    if (response.status === 200) {
+                        const data = response.data;
+                        if (data.url && data.alt && data.href) {
+                            const fullUrl = 'http://localhost:8080' + data.url; // 拼接完整的 URL
+                            insertVideoFn(fullUrl, data.alt, data.href); // 将视频插入到编辑器中
+                        } else {
+                            console.error('上传视频失败: 后端响应中缺少必要的字段', data);
+                        }
+                    } else {
+                        console.error('上传视频失败: 后端响应状态码不是 200', response);
+                    }
+                } catch (error) {
+                    console.error('上传视频失败:', error);
+                }
+            });
+        };
+
         editor.create();
     });
 });
@@ -59,7 +111,7 @@ const askQuestion = async () => {
         console.log('问题：', response.data);
         if (response.data.code === 201) {
             alert("提问成功！");
-            router.push('/questions');
+            router.push('/');
         } else {
             alert("提问失败！");
         }
