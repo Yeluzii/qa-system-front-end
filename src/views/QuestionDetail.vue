@@ -251,8 +251,8 @@ onMounted(() => {
 
 .question-detail-container {
     border: 1px solid;
-    max-width: 80vw;
-    margin: 30px auto;
+    width: 80vw;
+    margin: 110px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);

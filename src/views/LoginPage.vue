@@ -1,4 +1,8 @@
 <template>
+    <div class="logo-container">
+        <img src="../assets/logo.jpg" alt="logo" />
+        <div style="font-size: 40px;padding-top: 0.5em;">简易问答系统</div>
+    </div>
     <nav class="nav-container">
         <router-link to="/login">登录</router-link> |
         <router-link to="/register">注册</router-link>
@@ -47,6 +51,21 @@ const login = async () => {
 
 
 <style scoped>
+.logo-container {
+    justify-content: center;
+    display: flex;
+    text-align: left;
+    height: 100px;
+    width: 80vw;
+    margin-left: 10vw;
+}
+
+.logo-container img {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+}
+
 .nav-container {
     text-align: center;
     margin-bottom: 20px;
@@ -64,7 +83,7 @@ const login = async () => {
 }
 
 .login-container {
-    max-width: 400px;
+    width: 50vw;
     margin: 50px auto;
     padding: 20px;
     background-color: #fff;

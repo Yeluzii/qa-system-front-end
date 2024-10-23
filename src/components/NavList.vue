@@ -1,11 +1,17 @@
 <template>
-    <div class="action-buttons">
-        <button @click="router.back()" class="back-button">返回</button>
-        <button @click="ask" class="ask-button">提问</button>
-        <button @click="router.push('/')" class="ask-button">问题广场</button>
-        <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
-        <button @click="login" class="login-button" v-else>登录</button>
-        <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" title="主页" />
+    <div class="header">
+        <div class="logo-container">
+            <img src="../assets/logo.jpg" alt="logo" />
+            <div style="font-size: 40px;padding-top: 0.5em;">简易问答系统</div>
+        </div>
+        <div class="action-buttons">
+            <button @click="router.back()" class="back-button">返回</button>
+            <button @click="ask" class="ask-button">提问</button>
+            <button @click="router.push('/')" class="ask-button">问题广场</button>
+            <button @click="logout" class="logout-button" v-if="userId">退出登录</button>
+            <button @click="login" class="login-button" v-else>登录</button>
+            <img class="avatar medium" @click="toMyProfiles" :src="avatar" alt="头像" title="主页" />
+        </div>
     </div>
     <!-- <div class="avatar-container">
             <div class="avatar medium" @click="printAvatar">
@@ -74,6 +80,34 @@ const toMyProfiles = () => {
 </script>
 
 <style scoped>
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80vw;
+    background-color: rgba(103, 219, 255, 0.8);
+    margin: 1px auto;
+    border: 1px solid black;
+    border-radius: 10px;
+    position: fixed;
+    top: 0;
+    left: 10vw;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    display: flex;
+    text-align: left;
+    height: 100px;
+}
+
+.logo-container img {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+}
+
 .logout-button,
 .login-button,
 .ask-button,

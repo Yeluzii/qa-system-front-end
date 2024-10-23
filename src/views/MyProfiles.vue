@@ -44,8 +44,8 @@ onMounted(() => {
 
 <style scoped>
 .user-info-container {
-    max-width: 1200px;
-    margin: 50px auto;
+    width: 80vw;
+    margin: 110px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);

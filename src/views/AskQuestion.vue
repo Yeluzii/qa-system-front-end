@@ -7,7 +7,7 @@
                 <el-input v-model="title" class="input-field" required></el-input>
             </el-form-item>
             <el-form-item label="正文" class="form-item">
-                <div ref="editorElem" style="text-align:left;"></div>
+                <div ref="editorElem" style="text-align: left;ali" placeholder="请输入正文"></div>
             </el-form-item>
             <el-button type="primary" native-type="submit" class="submit-button">提问</el-button>
         </el-form>
@@ -98,12 +98,24 @@ onMounted(() => {
     });
 });
 
+const isContentEmpty = (content: string): boolean => {
+    // 移除所有HTML标签
+    let textOnly = content.replace(/<[^>]+>/g, '');
+    // 移除所有形式的空白字符，包括 &nbsp; 实体
+    textOnly = textOnly.replace(/(&nbsp;|\s)/g, '').trim();
+    return textOnly === '';
+};
 const askQuestion = async () => {
     try {
         console.log("userId为：" + userId.value);
         if (!userId.value) {
             alert("请先登录！");
             router.push("/login");
+            return;
+        }
+        // 检查编辑器内容是否为空
+        if (isContentEmpty(editorContent.value)) {
+            alert("请输入正文！");
             return;
         }
 
@@ -124,7 +136,7 @@ const askQuestion = async () => {
 <style scoped>
 .ask-question-container {
     max-width: 80vw;
-    margin: 50px auto;
+    margin: 110px auto;
     padding: 20px;
     background-color: #fff;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, .1);

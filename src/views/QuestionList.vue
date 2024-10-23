@@ -153,8 +153,7 @@ onMounted(() => {
 
 .question-square-container {
     max-width: 80vw;
-    margin: 0 auto;
-    padding: 10px;
+    margin: 110px auto;
 }
 
 .questions-grid {
